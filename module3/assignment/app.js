@@ -5,6 +5,7 @@ angular.module('NarrowDownMenuChoiceAPP', [])
 .controller('NarrowItDownController', NarrowItDownController)
 .service('MenuSearchService',MenuSearchService)
 .directive('foundItem', FoundItem )
+.directive('loader',Loader)
 .constant('ApiBasePath',"https://davids-restaurant.herokuapp.com/");
 
 
@@ -23,7 +24,6 @@ function FoundItem() {
 
   return ddo;
 }
-
 
 function MenuListDirectiveLink(scope, element, attrs, controller) {
 
@@ -74,6 +74,46 @@ function MenuListDirectiveController() {
   };
 }
 
+function Loader()
+{
+  var ddo = {
+    templateUrl: 'loader/itemsloaderindicator.template.html',
+    scope: {
+      processing: '<'
+    },
+    link: LoaderDirectiveLink
+  };
+
+  return ddo;
+}
+
+function LoaderDirectiveLink(scope, element, attrs) {
+
+  scope.$watch('processing', function (newValue, oldValue) {
+
+    if (newValue === true) {
+      displayLoader();
+    }
+    else {
+      removeLoader();
+    }
+
+
+   });
+
+  function displayLoader() {
+    // If jQuery included before Angluar
+    var loader = element.find("div.loader");
+    loader.show();
+  }
+
+  function removeLoader() {
+    // If jQuery included before Angluar
+    var loader = element.find("div.loader");
+    loader.hide();
+  }
+
+}
 
 // LIST #1 - controller
 NarrowItDownController.$inject = ['MenuSearchService'];
@@ -84,18 +124,29 @@ function NarrowItDownController(MenuSearchService) {
   // var shoppingList = ShoppingListFactory();
 
   ctrl.searchTerm = '';
+  ctrl.processing = false;
   //ctrl.foundItems = [];
 
   ctrl.getMatchedMenuItems = function (searchTerm) {
+     ctrl.showLoader();
      MenuSearchService.getMatchedMenuItems(searchTerm).then(function(result){
       ctrl.foundItems = result;
+      ctrl.hideLoader();
     });
+
 
   };
 
   ctrl.removeFoundItems = function (itemIndex) {
     ctrl.foundItems.splice(itemIndex,1);
   };
+
+  ctrl.showLoader = function (){
+    ctrl.processing = true;
+  }
+  ctrl.hideLoader = function (){
+    ctrl.processing = false;
+  }
 }
 
 MenuSearchService.$inject = ['$http','ApiBasePath']
