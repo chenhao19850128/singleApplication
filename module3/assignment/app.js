@@ -41,14 +41,14 @@ function MenuListDirectiveLink(scope, element, attrs, controller) {
   function displayNothingFoundWarning() {
     // If jQuery included before Angluar
     var warningElem = element.find("div.warning");
-    warningElem.slideDown(900);
+    warningElem.slideDown();
   }
 
 
   function removeNothingFoundWarning() {
     // If jQuery included before Angluar
     var warningElem = element.find("div.warning");
-    warningElem.slideUp(900);
+    warningElem.slideUp();
   }
 }
 
